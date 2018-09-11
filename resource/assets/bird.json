@@ -1,0 +1,35 @@
+{
+    "file": "bird.png",
+    "frames": {
+        "birdup": {
+            "x": 8,
+            "y": 11,
+            "w": 34,
+            "h": 24,
+            "offX": 0,
+            "offY": 0,
+            "sourceW": 34,
+            "sourceH": 24
+        },
+        "birdnm": {
+            "x": 60,
+            "y": 11,
+            "w": 34,
+            "h": 24,
+            "offX": 0,
+            "offY": 0,
+            "sourceW": 34,
+            "sourceH": 24
+        },
+        "birddown": {
+            "x": 113,
+            "y": 11,
+            "w": 34,
+            "h": 24,
+            "offX": 0,
+            "offY": 0,
+            "sourceW": 34,
+            "sourceH": 24
+        }
+    }
+}
