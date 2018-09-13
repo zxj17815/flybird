@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "sky_png,ground_png,bird",
+			"keys": "sky_png,ground_png,bird,column_up_png,column_down_png,over_png,start",
 			"name": "preload"
 		}
 	],
@@ -31,6 +31,27 @@
 			"type": "sheet",
 			"name": "bird",
 			"subkeys": "birddown,birdnm,birdup"
+		},
+		{
+			"url": "assets/column_up.png",
+			"type": "image",
+			"name": "column_up_png"
+		},
+		{
+			"url": "assets/column_down.png",
+			"type": "image",
+			"name": "column_down_png"
+		},
+		{
+			"url": "assets/over.png",
+			"type": "image",
+			"name": "over_png"
+		},
+		{
+			"url": "assets/start.json",
+			"type": "sheet",
+			"name": "start",
+			"subkeys": "start_on"
 		}
 	]
 }

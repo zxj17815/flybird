@@ -67,27 +67,64 @@ class Main extends egret.DisplayObjectContainer {
     }
 
 
+    //创建对象
+    private start: egret.Bitmap = new egret.Bitmap();
+    private bird: egret.Bitmap = new egret.Bitmap();
+    private sky: egret.Bitmap = new egret.Bitmap();
+    private rollsky: egret.Bitmap = new egret.Bitmap();
+    private ground: egret.Bitmap = new egret.Bitmap();
+    private rollground: egret.Bitmap = new egret.Bitmap();
+    private gameOver: egret.Bitmap = new egret.Bitmap();
+    private gameStatus: boolean = false;
+    private touchbox: egret.Sprite = new egret.Sprite();
 
-    private bird: egret.Bitmap;
+    private column_top1: egret.Bitmap = new egret.Bitmap();
+    private column_down1: egret.Bitmap = new egret.Bitmap();
+    private column_top2: egret.Bitmap = new egret.Bitmap();
+    private column_down2: egret.Bitmap = new egret.Bitmap();
+
     /**
      * 创建游戏场景
      * Create a game scene
      */
     private createGameScene() {
-        let sky = this.createBitmapByName("sky_png");
-        this.addChild(sky);
+        this.sky.texture = RES.getRes("sky_png");
+        this.addChild(this.sky);
         let stageW = this.stage.stageWidth;
         let stageH = this.stage.stageHeight;
-        sky.width = stageW;
-        sky.height = stageH * 0.8;
+        this.sky.width = stageW;
+        this.sky.height = stageH * 0.8;
 
-        let ground = this.createBitmapByName("ground_png");
-        this.addChild(ground);
-        ground.width = stageW;
-        ground.height = stageH * 0.2;
-        ground.y = sky.height;
+        this.rollsky.texture = RES.getRes("sky_png");
+        this.addChild(this.rollsky);
+        this.rollsky.width = stageW;
+        this.rollsky.height = stageH * 0.8;
+        this.rollsky.x = stageW;
 
-        this.bird = this.createBitmapByName("bird#birdup");
+        this.column_top1.texture = RES.getRes("column_up_png");
+        this.addChild(this.column_top1);
+        this.column_top2.texture = RES.getRes("column_up_png");
+        this.addChild(this.column_top2);
+
+        this.column_down1.texture = RES.getRes("column_down_png");
+        this.addChild(this.column_down1);
+        this.column_down2.texture = RES.getRes("column_down_png");
+        this.addChild(this.column_down2);
+
+        this.ground.texture = RES.getRes("ground_png");
+        this.addChild(this.ground);
+        this.ground.width = stageW;
+        this.ground.height = stageH * 0.2;
+        this.ground.y = this.sky.height;
+
+        this.rollground.texture = RES.getRes("ground_png");
+        this.addChild(this.rollground);
+        this.rollground.width = stageW;
+        this.rollground.height = stageH * 0.2;
+        this.rollground.y = this.sky.height;
+        this.rollground.x = stageW;
+
+        this.bird.texture = RES.getRes("bird#birdup");
         this.addChild(this.bird);
         this.bird.width = stageW * 0.12;
         this.bird.height = stageH * 0.05;
@@ -95,38 +132,190 @@ class Main extends egret.DisplayObjectContainer {
         this.bird.y = stageH * 0.4;
 
 
-        //绘制一个透明度为0的绿色矩形，覆盖全屏用于触发点击事件
-        var touchbox: egret.Sprite = new egret.Sprite();
-        touchbox.graphics.beginFill(0x00ff00, 0);
-        touchbox.graphics.drawRect(0, 0, stageW, stageH);
-        touchbox.graphics.endFill();
-        touchbox.width = stageW;
-        touchbox.height = stageH;
-        this.addChild(touchbox);
+        this.column_top1.width = stageW * 0.15;
+        this.column_top1.height = stageH * 0.6
+        var r = Math.round(((Math.random() * (5 - 2) + 2)) * 10) / 10
+        this.column_top1.y = -stageH * 0.1 * r;
+        console.log(this.column_top1.y)
+        this.column_top1.x = stageW;
+
+        this.column_top2.width = stageW * 0.15;
+        this.column_top2.height = stageH * 0.6
+        var r2 = Math.round(((Math.random() * (5 - 2) + 2)) * 10) / 10
+        this.column_top2.y = -stageH * 0.1 * r2;
+        console.log(this.column_top2.y)
+        this.column_top2.x = stageW * 2
+
+        this.column_down1.width = stageW * 0.15;
+        this.column_down1.height = stageH * 0.6;
+        this.column_down1.y = this.column_top1.y + stageH * 0.6 + this.bird.height * 5;
+        console.log(this.column_down1.y)
+        this.column_down1.x = this.column_top1.x
+
+        this.column_down2.width = stageW * 0.15;
+        this.column_down2.height = stageH * 0.6;
+        this.column_down2.y = this.column_top2.y + stageH * 0.6 + this.bird.height * 4.5;
+        console.log(this.column_down2.y)
+        this.column_down2.x = stageW * 2
+
+        this.start.texture = RES.getRes("start#start_on");
+        this.start.anchorOffsetX = this.start.width / 2;
+        this.start.anchorOffsetY = this.start.height / 2;
+        this.start.x = stageW * 0.5
+        this.start.y = stageH * 0.9
+        this.start.touchEnabled = true;
+        this.start.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onStart, this)
+        this.addChild(this.start)
+        this.addChild(this.gameOver)
+
+        this.gameOver.texture = RES.getRes("over_png");
+        this.gameOver.width = this.stage.stageWidth * 0.8;
+        this.gameOver.height = this.stage.stageHeight * 0.6;
+        this.gameOver.x = this.stage.stageWidth * 0.1;
+        this.gameOver.y = this.stage.stageHeight * 0.2;
+
+        //绘制一个透明度为0的矩形，覆盖全屏用于触发点击事件
+        this.touchbox.graphics.beginFill(0x00ff00, 0);
+        this.touchbox.graphics.drawRect(0, 0, stageW, stageH);
+        this.touchbox.graphics.endFill();
+        this.touchbox.width = stageW;
+        this.touchbox.height = stageH;
+
         //设置显示对象可以相应触摸事件
-        touchbox.touchEnabled = true;
-        //注册事件
-        touchbox.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouch, this);
+        this.touchbox.touchEnabled = true;
+        //注册touch事件
+        this.touchbox.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouch, this);
+
+        //注册帧监听
+        this.bird.addEventListener(egret.Event.ENTER_FRAME, this.onEnterFrame, this);
+
 
     }
 
+    //点击开始
+    private onStart(evt: egret.TouchEvent) {
+        console.log('start')
+        this.addChild(this.touchbox)
+        this.removeChild(this.gameOver)
+        this.removeChild(this.start)
+        this.gameStatus = true;
+        let stageW = this.stage.stageWidth;
+        let stageH = this.stage.stageHeight;
+
+        this.bird.width = stageW * 0.12;
+        this.bird.height = stageH * 0.05;
+        this.bird.x = stageW * 0.3;
+        this.bird.y = stageH * 0.4;
+
+        this.column_top1.width = stageW * 0.15;
+        this.column_top1.height = stageH * 0.6
+        var r = Math.round(((Math.random() * (5 - 2) + 2)) * 10) / 10
+        this.column_top1.y = -stageH * 0.1 * r;
+        console.log(this.column_top1.y)
+        this.column_top1.x = stageW;
+
+        this.column_top2.width = stageW * 0.15;
+        this.column_top2.height = stageH * 0.6
+        r = Math.round(((Math.random() * (5 - 2) + 2)) * 10) / 10
+        this.column_top2.y = -stageH * 0.1 * r;
+        console.log(this.column_top2.y)
+        this.column_top2.x = stageW * 2
+
+        this.column_down1.width = stageW * 0.15;
+        this.column_down1.height = stageH * 0.6;
+        this.column_down1.y = this.column_top1.y + stageH * 0.6 + this.bird.height * 5;
+        console.log(this.column_down1.y)
+        this.column_down1.x = this.column_top1.x
+
+        this.column_down2.width = stageW * 0.15;
+        this.column_down2.height = stageH * 0.6;
+        this.column_down2.y = this.column_top2.y + stageH * 0.6 + this.bird.height * 4.5;
+        console.log(this.column_down2.y)
+        this.column_down2.x = stageW * 2
+    }
+
+    // 点击屏幕事件
     private onTouch(evt: egret.TouchEvent) {
-        egret.Tween.pauseTweens(this.bird);
-        egret.Tween.removeTweens(this.bird);
-        var fly = egret.Tween.get(this.bird, { loop: false }).call(function () {
-            this.bird.texture = RES.getRes("bird#birdnm")
-        }, this,[]);
-        fly.wait(500)
-        fly.call(function () {
-            this.bird.texture = RES.getRes("bird#birddown")
-        }, this,[]);
-        fly.wait(500)
-        fly.call(function () {
-            this.bird.texture = RES.getRes("bird#birdup")
-        }, this,[]);
-        var up = egret.Tween.get(this.bird, { loop: false })
-        up.to({ x: this.bird.x, y: this.bird.y + this.stage.stageHeight * -0.2 }, 800, egret.Ease.sineOut);
-        up.to({ x: this.bird.x, y: this.stage.stageHeight }, 1800, egret.Ease.sineIn);
+        if (this.gameStatus) {
+            egret.Tween.pauseTweens(this.bird);
+            egret.Tween.removeTweens(this.bird);
+            var fly = egret.Tween.get(this.bird, { loop: false }).call(function () {
+                this.bird.texture = RES.getRes("bird#birdnm")
+            }, this, []);
+            fly.wait(100)
+            fly.call(function () {
+                this.bird.texture = RES.getRes("bird#birddown")
+            }, this, []);
+            fly.wait(100)
+            fly.call(function () {
+                this.bird.texture = RES.getRes("bird#birdup")
+            }, this, []);
+            var up = egret.Tween.get(this.bird, { loop: false })
+            up.to({ x: this.bird.x, y: this.bird.y + this.stage.stageHeight * -0.12 }, 360, egret.Ease.sineOut);
+            up.to({ x: this.bird.x, y: this.stage.stageHeight }, 800, egret.Ease.sineIn);
+        }
+    }
+
+    private onEnterFrame(e: egret.Event) {
+        if (this.gameStatus) {
+            var rcl = 2
+            //先获取鸟的上、下、前、后轴线
+            var bird_f = this.bird.x + this.bird.width - rcl;
+            var bird_b = this.bird.x + rcl
+            var bird_top = this.bird.y + rcl;
+            var bird_down = this.bird.y + this.bird.height - rcl;
+
+            // 碰撞检测
+            if (this.column_top1.hitTestPoint(bird_f, bird_top) || this.column_down1.hitTestPoint(bird_f - 2, bird_down) ||
+                this.column_top1.hitTestPoint(bird_b, bird_top) || this.column_down1.hitTestPoint(bird_b, bird_down) ||
+                this.column_top2.hitTestPoint(bird_f, bird_top) || this.column_down2.hitTestPoint(bird_f, bird_down) ||
+                this.column_top2.hitTestPoint(bird_b, bird_top) || this.column_down2.hitTestPoint(bird_b, bird_down)) {
+                console.log('hit');
+                this.gameStatus = false;
+                this.addChild(this.gameOver)
+                this.addChild(this.start)
+
+            } else {
+                //循环背景
+                if (this.sky.x == -this.stage.stageWidth) {
+                    this.sky.x = this.stage.stageWidth;
+                }
+                if (this.rollsky.x == -this.stage.stageWidth) {
+                    this.rollsky.x = this.stage.stageWidth;
+                }
+                if (this.ground.x == -this.stage.stageWidth) {
+                    this.ground.x = this.stage.stageWidth;
+                }
+                if (this.rollground.x == -this.stage.stageWidth) {
+                    this.rollground.x = this.stage.stageWidth;
+                }
+
+                //循环生成柱子
+                if (this.column_top1.x == -this.stage.stageWidth) {
+                    var r = Math.round(((Math.random() * (5 - 2) + 2)) * 10) / 10
+                    this.column_top1.y = -this.stage.stageHeight * 0.1 * r;
+                    this.column_down1.y = this.column_top1.y + this.stage.stageHeight * 0.6 + this.bird.height * 4.5;
+                    this.column_top1.x = this.stage.stageWidth;
+                    this.column_down1.x = this.stage.stageWidth;
+                }
+                if (this.column_top2.x == -this.stage.stageWidth) {
+                    var r = Math.round(((Math.random() * (5 - 2) + 2)) * 10) / 10
+                    this.column_top2.y = -this.stage.stageHeight * 0.1 * r;
+                    this.column_down2.y = this.column_top2.y + this.stage.stageHeight * 0.6 + this.bird.height * 4.2;
+                    this.column_top2.x = this.stage.stageWidth;
+                    this.column_down2.x = this.stage.stageWidth;
+                }
+                this.sky.x -= 8
+                this.ground.x -= 8
+                this.rollsky.x -= 8
+                this.rollground.x -= 8
+                this.column_top1.x -= 8
+                this.column_down1.x -= 8
+                this.column_top2.x -= 8
+                this.column_down2.x -= 8
+            }
+
+        }
     }
 
 
@@ -140,34 +329,4 @@ class Main extends egret.DisplayObjectContainer {
         result.texture = texture;
         return result;
     }
-
-    /**
-     * 描述文件加载成功，开始播放动画
-     * Description file loading is successful, start to play the animation
-     */
-    // private startAnimation(result: string[]) {
-    //     let parser = new egret.HtmlTextParser();
-
-    //     let textflowArr = result.map(text => parser.parse(text));
-    //     let textfield = this.textfield;
-    //     let count = -1;
-    //     let change = () => {
-    //         count++;
-    //         if (count >= textflowArr.length) {
-    //             count = 0;
-    //         }
-    //         let textFlow = textflowArr[count];
-
-    //         // 切换描述内容
-    //         // Switch to described content
-    //         textfield.textFlow = textFlow;
-    //         let tw = egret.Tween.get(textfield);
-    //         tw.to({ "alpha": 1 }, 200);
-    //         tw.wait(2000);
-    //         tw.to({ "alpha": 0 }, 200);
-    //         tw.call(change, this);
-    //     };
-
-    //     change();
-    // }
 }
