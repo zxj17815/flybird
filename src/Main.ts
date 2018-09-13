@@ -128,8 +128,8 @@ class Main extends egret.DisplayObjectContainer {
         this.addChild(this.bird);
         this.bird.width = stageW * 0.12;
         this.bird.height = stageH * 0.05;
-        this.bird.x = stageW * 0.3;
-        this.bird.y = stageH * 0.4;
+        this.bird.x = stageW * 0.2;
+        this.bird.y = stageH * 0.5;
 
 
         this.column_top1.width = stageW * 0.15;
@@ -194,7 +194,6 @@ class Main extends egret.DisplayObjectContainer {
 
     //点击开始
     private onStart(evt: egret.TouchEvent) {
-        console.log('start')
         this.addChild(this.touchbox)
         this.removeChild(this.gameOver)
         this.removeChild(this.start)
@@ -202,35 +201,21 @@ class Main extends egret.DisplayObjectContainer {
         let stageW = this.stage.stageWidth;
         let stageH = this.stage.stageHeight;
 
-        this.bird.width = stageW * 0.12;
-        this.bird.height = stageH * 0.05;
-        this.bird.x = stageW * 0.3;
-        this.bird.y = stageH * 0.4;
+        this.bird.x = stageW * 0.2;
+        this.bird.y = stageH * 0.5;
 
-        this.column_top1.width = stageW * 0.15;
-        this.column_top1.height = stageH * 0.6
         var r = Math.round(((Math.random() * (5 - 2) + 2)) * 10) / 10
         this.column_top1.y = -stageH * 0.1 * r;
-        console.log(this.column_top1.y)
         this.column_top1.x = stageW;
 
-        this.column_top2.width = stageW * 0.15;
-        this.column_top2.height = stageH * 0.6
         r = Math.round(((Math.random() * (5 - 2) + 2)) * 10) / 10
         this.column_top2.y = -stageH * 0.1 * r;
-        console.log(this.column_top2.y)
         this.column_top2.x = stageW * 2
 
-        this.column_down1.width = stageW * 0.15;
-        this.column_down1.height = stageH * 0.6;
         this.column_down1.y = this.column_top1.y + stageH * 0.6 + this.bird.height * 5;
-        console.log(this.column_down1.y)
         this.column_down1.x = this.column_top1.x
 
-        this.column_down2.width = stageW * 0.15;
-        this.column_down2.height = stageH * 0.6;
         this.column_down2.y = this.column_top2.y + stageH * 0.6 + this.bird.height * 4.5;
-        console.log(this.column_down2.y)
         this.column_down2.x = stageW * 2
     }
 
@@ -251,14 +236,14 @@ class Main extends egret.DisplayObjectContainer {
                 this.bird.texture = RES.getRes("bird#birdup")
             }, this, []);
             var up = egret.Tween.get(this.bird, { loop: false })
-            up.to({ x: this.bird.x, y: this.bird.y + this.stage.stageHeight * -0.12 }, 360, egret.Ease.sineOut);
+            up.to({ x: this.bird.x, y: this.bird.y + this.stage.stageHeight * -0.11 }, 350, egret.Ease.sineOut);
             up.to({ x: this.bird.x, y: this.stage.stageHeight }, 800, egret.Ease.sineIn);
         }
     }
 
     private onEnterFrame(e: egret.Event) {
         if (this.gameStatus) {
-            var rcl = 2
+            var rcl = 4
             //先获取鸟的上、下、前、后轴线
             var bird_f = this.bird.x + this.bird.width - rcl;
             var bird_b = this.bird.x + rcl
@@ -269,8 +254,8 @@ class Main extends egret.DisplayObjectContainer {
             if (this.column_top1.hitTestPoint(bird_f, bird_top) || this.column_down1.hitTestPoint(bird_f - 2, bird_down) ||
                 this.column_top1.hitTestPoint(bird_b, bird_top) || this.column_down1.hitTestPoint(bird_b, bird_down) ||
                 this.column_top2.hitTestPoint(bird_f, bird_top) || this.column_down2.hitTestPoint(bird_f, bird_down) ||
-                this.column_top2.hitTestPoint(bird_b, bird_top) || this.column_down2.hitTestPoint(bird_b, bird_down)) {
-                console.log('hit');
+                this.column_top2.hitTestPoint(bird_b, bird_top) || this.column_down2.hitTestPoint(bird_b, bird_down) ||
+                (bird_down > this.stage.stageHeight * 0.8) || (bird_top < 0)) {
                 this.gameStatus = false;
                 this.addChild(this.gameOver)
                 this.addChild(this.start)
